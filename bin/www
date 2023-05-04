@@ -6,6 +6,9 @@
 
 var app = require('../app');
 var debug = require('debug')('online-food-ordering-be:server');
+const mongoose = require("mongoose");
+const dbConfig = require("../config/database.config");
+
 var http = require('http');
 
 /**
@@ -80,6 +83,18 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
+mongoose
+  .connect(dbConfig.url, {
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    console.log("Database Connected Successfully!!");
+  })
+  .catch((err) => {
+    console.log("Could not connect to the database", err);
+    process.exit();
+  });
+
 
 function onListening() {
   var addr = server.address();
