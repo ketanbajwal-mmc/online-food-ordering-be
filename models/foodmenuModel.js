@@ -1,23 +1,37 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const foodmenuSchema = mongoose.Schema({
-  name: {
+  itemName: {
     required: true,
     type: String,
-    unique: true,
+    // unique: true,
   },
-  isActive: {
-    type: Boolean,
-    default: true,
+  category: {
+    type: String,
+    default: "Veg",
+  },
+  role: {
+    type: String,
+    required: true,
+    default: "Admin",
+  },
+  vendorName: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: String,
+    required: true,
   },
   description: {
     type: String,
     required: true,
   },
-  image: {
+  foodImage: {
     type: String,
-    required: true,
+    required: false,
   }
+
 });
 
 const foodmenuModel = mongoose.model("Foodmenu", foodmenuSchema);

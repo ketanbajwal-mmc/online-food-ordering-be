@@ -1,5 +1,5 @@
 const express = require("express");
-const UserController = require('../controllers/foodmenuController')
+const foodmenuController = require('../controllers/foodmenuController')
 
 const router = express.Router();
 
@@ -11,19 +11,16 @@ const router = express.Router();
 //   changeCategoryStatus
 // } = require("../controllers/foodmenuController");
 
-/* POST GET categories. */
-router.get("/", UserController.browseFoodMenu);
+/* POST GET  */
+router.get("/", foodmenuController.browseFoodMenu);
 
-/* POST ADD new category. */
-router.post("/", UserController.addfoodItem);
+/* POST ADD  */
+router.post("/", foodmenuController.addfoodItem);
 
-/* POST EDIT new category. */
-// router.patch("/:id", editCategory);
+/* PATCH EDIT  */
+router.patch("/:id", foodmenuController.editfoodItem);
 
-/* POST change status new category. */
-// router.patch("/change-status/:id", changeCategoryStatus);
-
-/* POST DELETE new category. */
-// router.delete("/:id", deleteCategory);
+/* POST DELETE  */
+router.delete("/:id", foodmenuController.deletefoodItem);
 
 module.exports = router;

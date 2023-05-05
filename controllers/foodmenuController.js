@@ -2,38 +2,50 @@ const { foodmenuModel } = require("../models/foodmenuModel");
 
 const browseFoodMenu = async (req, res) => {
   const foodItem = await foodmenuModel.find({
-    isActive: true,
+    // isActive: true,
   });
 
   res.status(200).json({
-    // success: true,
+    success: true,
     foodMenuAll: foodItem,
   });
 };
 
 const addfoodItem = async (req, res) => {
-  const name = req.body.name;
-  const image = req.body.image;
+    // const user = new foodmenuModel({
+    //     itemName: req.body.itemName,
+    //     category: req.body.category,
+    //     role: req.body.role,
+    //     price: req.body.price
+    // });
+
+  const itemName = req.body.itemName;
+  const category = req.body.category;
+  const role = req.body.role;
+  const vendorName = req.body.vendorName;
+  const price = req.body.price;
+  const foodImage = req.body.foodImage;
   const description = req.body.description;
-  if (!name) {
-      return res.status(422).json({
-      name: "name is required",
-    });
-  }
-  if (!image) {
-    return res.status(422).json({
-      image: "image is required",
-    });
-  }
+  
+  //428 STATUS - UNPROCESSABLE CONTENT 
+  if (!itemName) {
+    return res.status(428).json({itemName: "itemName is required",});}
+  if (!category) {
+    return res.status(422).json({image: "category is required",});}
+  if (!role) {
+    return res.status(422).json({role: "role is required",});}
+  if (!vendorName) {
+    return res.status(422).json({vendorName: "vendorName is required",});}
+  if (!price) {
+    return res.status(422).json({price: "price is required",});}
   if (!description) {
-    return res.status(422).json({
-      description: "Description is required",
-    });
-  }
+    return res.status(422).json({description: "Description is required",});}
+//   if (!foodImage) {
+//     return res.status(422).json({foodImage: "foodImage is required",});
+//   }
 
   const newfoodItem = await new foodmenuModel({
-    name,image,description
-  }).save();
+    itemName,category,description,foodImage,price,vendorName,role}).save();
 
   res.status(200).json({
     success: true,
@@ -41,127 +53,66 @@ const addfoodItem = async (req, res) => {
   });
 };
 
+const editfoodItem = async (req, res) => {
+ // const user = new foodmenuModel({
+    //     itemName: req.body.itemName,
+    //     category: req.body.category,
+    //     role: req.body.role,
+    //     price: req.body.price
+    // });
+    const id = req.params.id;
 
+    const itemName = req.body.itemName;
+    const category = req.body.category;
+    const role = req.body.role;
+    const vendorName = req.body.vendorName;
+    const price = req.body.price;
+    const foodImage = req.body.foodImage;
+    const description = req.body.description;
+    //428 STATUS - UNPROCESSABLE CONTENT 
+    if (!itemName) {
+      return res.status(428).json({itemName: "itemName is required",});}
+    if (!category) {
+      return res.status(422).json({image: "category is required",});}
+    if (!role) {
+      return res.status(422).json({role: "role is required",});}
+    if (!vendorName) {
+      return res.status(422).json({vendorName: "vendorName is required",});}
+    if (!price) {
+      return res.status(422).json({price: "price is required",});}
+    if (!description) {
+      return res.status(422).json({description: "Description is required",});}
+  //   if (!foodImage) {
+  //     return res.status(422).json({foodImage: "foodImage is required",});
+  //   }
+  const updatefoodItem = await foodmenuModel.findByIdAndUpdate(
+    id,
+    {itemName: itemName,category: category,description:description,
+     foodImage: foodImage,price: price,vendorName: vendorName,role:role,},
+    {new: true,});
 
+  res.status(200).json({
+    success: true,
+    foodMenuAll: updatefoodItem,
+  });
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const editCategory = async (req, res) => {
-//   const id = req.params.id;
-//   const name = req.body.name;
-//   const image = req.body.image;
-//   const description = req.body.description;
-//   if (!id) {
-//     return res.status(422).json({
-//       id: "Required",
-//     });
-//   }
-
-//   if (!name) {
-//     return res.status(422).json({
-//       name: "Required",
-//     });
-//   }
-//   if (!image) {
-//     return res.status(422).json({
-//       image: "image is required",
-//     });
-//   }
-//   if (!description) {
-//     return res.status(422).json({
-//       description: "Description is required",
-//     });
-//   }
-//   const updatedCategory = await CategoryModel.findByIdAndUpdate(
-//     id,
-//     {
-//       name: name,image: image,description: description,
-//     },
-//     {
-//       new: true,
-//     }
-//   );
-
-//   res.status(200).json({
-//     success: true,
-//     category: updatedCategory,
-//   });
-// };
-
-// const changeCategoryStatus = async (req, res) => {
-//   const id = req.params.id;
-//   if (!id) {
-//     return res.status(422).json({
-//       id: "Required",
-//     });
-//   }
-
-//   const category = await CategoryModel.findById(id);
-// if(category){  
-//   const isActive = !category.isActive
-//   const updatedCategory = await CategoryModel.findByIdAndUpdate(
-//     id,
-//     {
-//       isActive: isActive,
-//     },
-//     {
-//       new: true,
-//     }
-//   );
-
-//   res.status(200).json({
-//     success: true,
-//     category: updatedCategory,
-//   });
-// }
-  
-// };
-
-// const deleteCategory = async (req, res) => {
-//   const id = req.params.id;
-//   if (!id) {
-//     return res.status(422).json({
-//       id: "Required",
-//     });
-//   }
-
-
-//   await CategoryModel.findByIdAndDelete(
-//     id,
-//   );
-
-//   res.status(200).json({
-//     success: true,
-//   });
-
-  
-// };
-
+const deletefoodItem = async (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    return res.status(422).json({
+      id: "Required",
+    });
+  }
+  await foodmenuModel.findByIdAndDelete(id,);
+  res.status(200).json({
+    success: true,
+  });
+};
 
 module.exports = {
   addfoodItem,
-//   editCategory,
-//   deleteCategory,
+  editfoodItem,
+  deletefoodItem,
   browseFoodMenu,
-//   changeCategoryStatus
 };
