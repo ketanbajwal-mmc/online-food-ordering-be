@@ -1,41 +1,27 @@
+
 const { Authentication } = require("../models/authenticationModel");
 
-
-const loginAdmin = async (req, res) => {
-    console.log('req', req.body)
+exports.loginAdmin = async (req, res) => {
     const login = {
         username: req.body.username,
         password: req.body.password
     }
-    const valid = false;
     try {
-        
-        let admin = await Authentication.findOne({
-            username: login.username,
-            password: login.password
+        let user = await Authentication.findOne({
+            username: login.username
         });
-        console.log(admin)
-        console.log('junk')
-        if (admin === null) {
-            // res.status(400).json({
-            //     type: "Not Found",
-            //     msg: "Wrong Login Details"
-            // })
-            res.status(200).json({
-                success: false,
-                token: null,
-                adminDetails: login.username
+        //check if user exit
+        if (!user) {
+            res.status(400).json({
+                type: "Not Found",
+                msg: "Wrong Login Details"
             })
-            valid = false;      
+            return ;
         }
-        else{
-            valid = true;
-        }
-        //let match = await admin.compareUserPassword(login.password, admin.password);
-        if (true) {
-            let token = await admin.generateJwtToken({
-
-                admin
+        // let match = await user.compareUserPassword(login.password, user.password);
+        
+            let token = await user.generateJwtToken({
+                user
             }, "secret", {
                 expiresIn: 604800
             })
@@ -43,31 +29,21 @@ const loginAdmin = async (req, res) => {
                 res.status(200).json({
                     success: true,
                     token: token,
-                    adminDetails: admin.username
+                    userCredentials: user
                 })
             }
-            console.log('empty token')
-        } else {
-            res.status(400).json({
-                type: "Not Found",
-                msg: "Wrong Login Details"
-            })
+        
+        if (token){
+            // res.status(400).json({
+            //     type: "Not Found",
+            //     msg: "Wrong Login Details"
+            // })
         }
     } catch (err) {
         console.log(err)
-        // res.status(500).json({
-        //     type: "Something Went Wrong",
-        //     msg: err
-        // })
-        res.status(200).json({
-            success: false,
-            token: null,
-            adminDetails: admin.username
+        res.status(500).json({
+            type: "Something Went Wrong",
+            msg: err
         })
     }
-}
-
-module.exports = {
-    loginAdmin
-
 }

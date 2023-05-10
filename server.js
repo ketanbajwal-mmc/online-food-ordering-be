@@ -1,30 +1,46 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const UserRoute = require('./app/routes/user');
-const cors = require('cors');
-const app = express();
-const dbConfig = require('./config/database.config.js');
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cors());
-app.use('/user',UserRoute)
-
-// mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig.url, {
-    useNewUrlParser: true
-}).then(() => {
-    console.log("Database Connected Successfully!!");    
-}).catch(err => {
-    console.log('Could not connect to the database', err);
-    process.exit();
+process.on('uncaughtException', err => {
+  console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
 });
 
-app.get('/', (req, res) => {
-    res.json({"message": "Hello Crud Node Express"});
+dotenv.config({ path: './config.env' });
+
+const app = require('./app');
+
+const DB = process.env.DB_URL.replace(
+  '<PASSWORD>',
+  process.env.DB_PASSWORD
+);
+
+mongoose
+  .connect(DB, {
+    // useNewUrlParser: true,
+    // useCreateIndex: true,
+    // useFindAndModify: false
+  })
+  .then(() => console.log('DB connection successful!'));
+
+const port = process.env.PORT || 3000;
+
+const server = app.listen(port, () => {
+  console.log(`App running on port ${port}...`);
 });
 
-app.listen(3000, () => {
-    console.log("Server is listening on port 3000");
+process.on('unhandledRejection', err => {
+  console.log('UNHANDLED REJECTION! 💥 Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('👋 SIGTERM RECEIVED. Shutting down gracefully');
+  server.close(() => {
+    console.log('💥 Process terminated!');
+  });
 });
