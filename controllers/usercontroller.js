@@ -24,7 +24,7 @@ exports.findOne = async (req, res) => {
 
 // Create and Save a new user
 exports.create = async (req, res) => {
-   if (!req?.body?.email && !req?.body?.userName && !req?.body?.mobile && !req?.body?.role && !req?.body?.password && !req?.body?.confirm_password ) {
+   if (!req?.body?.email && !req?.body?.userName && !req?.body?.mobile && !req?.body?.role && !req?.body?.password  ) {
         res.status(400).send({ message: "Content can not be empty!" });
     }
  
@@ -35,10 +35,10 @@ exports.create = async (req, res) => {
         userName: req.body.userName,
         mobile: req.body.mobile,
         role: req.body.role,
-        password: hash,
-        confirm_password:req.body.confirm_password
+        password: hash
+        // confirm_password:req.body.confirm_password
     });
-    console.log(password, "testing debug func")
+    // console.log(password, "testing debug func")
     res.setHeader('Content-Type', 'application/json');
     // await user.save();
     await user.save().then(data => {

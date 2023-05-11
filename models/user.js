@@ -28,21 +28,11 @@ var schema = new mongoose.Schema({
     role: {
        type: ROLES
     },
-    // role:
-    //     { 
-    //         type: SchemaTypes.String, 
-    //         enum: ['Customer', 'VENDOR'], 
-    //         default: Role.Customer, 
-    //         required: false
-    //      },
-    
-        password: {
+   password: {
         type: String,
         default: ''
-     },
-     permissions: {
-        type: String
      }
+    
      
 });
 
