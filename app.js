@@ -1,41 +1,73 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const path = require('path');
+const express = require('express');  //Definition
+const helmet = require('helmet');  //Definition
+const cookieParser = require('cookie-parser');  //Definition
+const bodyParser = require('body-parser');  //Definition
+const cors = require('cors');  //Definition
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// const mongoose = require('mongoose');
+// const dotenv = require('dotenv');
 
-var app = express();
+const authenticationRouter = require('./routes/authenticationRouter');
+const adminLoginRouter = require('./routes/adminloginRouter');
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// Start express app
+const app = express();
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.enable('trust proxy');
+
+app.set('view engine', 'pug');
+app.use(cors());
+
+
+app.options('*', cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// Set security HTTP headers
+app.use(helmet());
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// Development logging
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(cookieParser());
+
+// Test middleware
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  // console.log(req.cookies);
+  next();
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.get('/', (req, res) => {
+  // i can write the code 
+  res.send('Hello g welcome')
+})
+
+// 3) ROUTES
+//app.use('/', viewRouter);
+
+//New Line
+
+//authentication
+app.use('/authentication',authenticationRouter);
+
+//adminLogin
+app.use('/adminlogin',adminLoginRouter);
+
+
+
+app.all('*', (req, res, next) => {
+  res.status(404)
+//  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
+
+//app.use(globalErrorHandler);
+
+
 
 module.exports = app;
